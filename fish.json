@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "name": "Карп",
+        "latin_name": "Cyprinus carpio",
+        "is_salt_water_fish": false,
+        "sub_type_count": 9
+    },
+    {
+        "id": 2,
+        "name": "Окунь",
+        "latin_name": "Perca fluviatilis",
+        "is_salt_water_fish": false,
+        "sub_type_count": 4
+    },
+    {
+        "id": 3,
+        "name": "Карась",
+        "latin_name": "Carassius carassius",
+        "is_salt_water_fish": false,
+        "sub_type_count": 1
+    },
+    {
+        "id": 4,
+        "name": "Щука",
+        "latin_name": "Esox lucius",
+        "is_salt_water_fish": false,
+        "sub_type_count": 3
+    },
+    {
+        "id": 5,
+        "name": "Лещ",
+        "latin_name": "Abramis brama",
+        "is_salt_water_fish": false,
+        "sub_type_count": 2
+    }
+]
