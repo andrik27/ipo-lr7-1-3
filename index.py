@@ -1,9 +1,10 @@
-import json
+import json  # Подключение библиотеки
 
+# Функция для ввода целого числа с валидацией
 def input_int(prompt, min_value=None, max_value=None):
     while True:
         try:
-            value = int(input(prompt))
+            value = int(input())
             if (min_value is not None and value < min_value) or (max_value is not None and value > max_value):
                 print(f"Пожалуйста, введите целое число от {min_value} до {max_value}.")
             else:
@@ -11,6 +12,7 @@ def input_int(prompt, min_value=None, max_value=None):
         except ValueError:
             print("Пожалуйста, введите корректное целое число.")
 
+# Функция для ввода числа с плавающей запятой с валидацией
 def input_float(prompt):
     while True:
         try:
@@ -18,6 +20,7 @@ def input_float(prompt):
         except ValueError:
             print("Пожалуйста, введите корректное число.")
 
+# Функция для ввода "да" или "нет" с валидацией
 def input_yes_no(prompt):
     while True:
         response = input(prompt).strip().lower()
@@ -26,13 +29,13 @@ def input_yes_no(prompt):
         else:
             print("Пожалуйста, введите 'да' или 'нет'.")
 
+# Считывание данных из файла
 with open("fish.json", 'r', encoding='utf-8') as file:
-    data = json.load(file)
+    data = json.load(file) 
 
-count = 0 
-open_program = True
+count = 0  # Для подсчета выполненных операций
 
-def menu():
+while True:
     print("""
        1: Вывести все записи 
        2: Вывести запись по полю 
@@ -41,107 +44,132 @@ def menu():
        5: Выйти из программы
     """)
 
-def all_records():
-    global count
-    for fish in data:
-        print(f"""
-        Номер записи: {fish['id']}, 
-        Общее название: {fish['name']},                       
-        Латинское название: {fish['latin_name']}, 
-        Пресноводная: {fish['is_salt_water_fish']},    
-        Кол-во подвидов: {fish['sub_type_count']} 
-        """)
-    count += 1
+    while True:
+        numb = input("Введите номер действия: ")
+        if numb.isdigit():
+            numb = int(numb)
+            break
+        else: 
+            print("Введите число! (цифрой)")
 
-def index():
-    global count
-    id = input_int("Введите номер рыбы: ")
-    find = False    
-    for fish in data:
-        if id == fish['id']:
+    if numb == 1:  # Выводим все записи
+        print(" Все записи: ".center(60, '~'))
+        for fish in data:
             print(f"""
             Номер записи: {fish['id']}, 
-            Общее название: {fish['name']},                       
-            Латинское название: {fish['latin_name']}, 
-            Пресноводная: {fish['is_salt_water_fish']},    
-            Кол-во подвидов: {fish['sub_type_count']} 
+            Общее название рыбы: {fish['name']},                       
+            Латинское (научное) название рыбы: {fish["latin_name"]}, 
+            Рыба пресноводная или нет: {fish['is_salt_water_fish']},    
+            Количество подвидов рыбы: {fish['sub_type_count']} 
             """)
-            find = True  
-            break  
-    count += 1
-    if not find:
-        print("Запись не найдена.")
+        count += 1
 
-def new():
-    global count
-    id = input_int("Введите номер рыбы: ")    
-    exists = any(fish['id'] == id for fish in data)
+    elif numb == 2:  # Выводим определенную запись
+        while True:
+            id = input("Введите номер записи: ")
+            if id.isdigit():
+                id = int(id)
+                break
+            else: 
+                print("Введите номер рыбы (цифрой)")
+
+        find = False
+        for fish in data:
+            if id == fish['id']:
+                print(f"""
+                Номер записи: {fish['id']},
+                Общее название: {fish['name']},
+                Латинское (научное) название рыбы: {fish['latin_name']}, 
+                Рыба пресноводная или нет: {fish['is_salt_water_fish']},    
+                Количество подвидов рыбы: {fish['sub_type_count']} 
+                """)
+                find = True
+                break
+        count += 1
+
+        if not find:
+            print(" Запись не найдена ".center(60, "~"))
+
+    elif numb == 3:  # Добавление новой записи
+        while True:
+            id = input("Введите номер рыбы: ")
+            if id.isdigit():
+                id = int(id)
+                break
+            else: 
+                print("Введите номер рыбы (цифрой)")
+
+        find = False
+        for fish in data:
+            if fish['id'] == id:
+                find = True
+                break
         
-    if exists:
-        print("Такой номер уже существует.")
-    else:
-        name = input("Введите название: ").strip()
-        latin_name = input("Введите латинское название: ").strip()
-        is_salt_water_fish = input_yes_no("Введите, пресноводная ли рыба (да/нет): ")
-        sub_type_count = input_float("Введите кол-во подвидов: ")
-
-        new_fish = {
-            'id': id,
-            'name': name,
-            'latin_name': latin_name,
-            'is_salt_water_fish': is_salt_water_fish == 'да',
-            'sub_type_count': sub_type_count
-        }
-
-        data.append(new_fish)
-        with open("fish.json", 'w', encoding='utf-8') as out_file:
-            json.dump(data, out_file)
-        print("Запись успешно добавлена.")
-    count += 1
-
-def del_id():
-    global count
-    id = input_int("Введите номер рыбы: ")
-    find = False  
-
-    for fish in data:
-        if id == fish['id']:
-            data.remove(fish)  
-            find = True  
-            break 
-
-    if not find:
-        print("Запись не найдена.")
-    else:
-        with open("fish.json", 'w', encoding='utf-8') as out_file:
-            json.dump(data, out_file)
-        print("Запись успешно удалена.")
-    count += 1
-
-def exit_program():
-    global count
-    global open_program
-    print(f"""Программа завершена.
-            Кол-во операций: {count}""")
-    open_program = False
-
-def main():
-    while open_program:
-        menu()
-
-        num = input_int("Введите номер действия: ", 1, 5)
-
-        if num == 1:
-            all_records()
-        elif num == 2:
-            index()
-        elif num == 3:
-            new()
-        elif num == 4:
-            del_id()
-        elif num == 5:
-            exit_program()
+        if find: 
+            print("Такой номер уже существует.")
         else:
-            print("Такого номера нет.")
+            new_name = input("Введите общее название рыбы: ")  
+            new_latin_name = input("Введите латинское название рыбы: ")  
 
-main()
+            while True:
+                numb = input("Введите, является ли пресноводной (1 - да / 2 - нет): ")
+                if numb.isdigit():
+                    numb = int(numb)
+                    if numb == 1:
+                        new_salt_water_fish = 'да'
+                        break
+                    elif numb == 2:
+                        new_salt_water_fish = 'нет'
+                        break
+                else:
+                    print("Вы должны ввести число (1 - является пресноводной, 2 - не является)")
+                
+            while True:
+                new_sub_type_count = input("Введите количество подвидов рыбы (числом): ")
+                if new_sub_type_count.isdigit():
+                    new_sub_type_count = int(new_sub_type_count)
+                    break
+                else: 
+                    print("Введите количество видов рыбы числом")
+
+            new_fish = {
+                'id': id,
+                'name': new_name,
+                'latin_name': new_latin_name,
+                'is_salt_water_fish': True if new_salt_water_fish.lower() == 'да' else False, 
+                'sub_type_count': new_sub_type_count
+            }
+
+            data.append(new_fish) 
+            with open("fish.json", 'w', encoding='utf-8') as out_file: 
+                json.dump(data, out_file)
+            print("Рыба успешно добавлена.")
+
+        count += 1
+
+    elif numb == 4:  # Удаляем запись
+        id = input_int("Введите номер записи для удаления: ")
+        find = False  
+
+        for fish in data:
+            if id == fish['id']:
+                data.remove(fish)  # Удаление 
+                find = True  
+                break 
+
+        if not find:
+            print("Запись не найдена.")
+        else:
+            with open("fish.json", 'w', encoding='utf-8') as out_file:
+                json.dump(data, out_file)
+            print("Запись успешно удалена.")
+
+        count += 1
+
+    elif numb == 5:  # Завершаем программу
+        print(f"""Программа завершена.
+        Кол-во операций: {count}""")
+        break
+
+    else:
+        print("Число должно быть от 1 до 5")
